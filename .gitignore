@@ -1,8 +1,20 @@
+# Python
 venv/
 __pycache__/
 *.pyc
+
+# Logs
 logs/
-.env
 *.log
+
+# Environment
+.env
+
+# Data (optional - remove if you want sample data in repo)
 data/
+
+# Airflow local state
 .airflow/
+
+# Spark / JDBC drivers
+postgresql-*.jar
