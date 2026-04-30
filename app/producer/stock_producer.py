@@ -1,0 +1,73 @@
+import os
+import json
+import time
+import requests
+from dotenv import load_dotenv
+from kafka import KafkaProducer
+
+load_dotenv()
+
+API_KEY = os.getenv("RAPIDAPI_KEY")
+API_HOST = os.getenv("RAPIDAPI_HOST")
+TOPIC = os.getenv("KAFKA_TOPIC", "stock_prices")
+BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+
+SYMBOLS = ["IBM", "AAPL", "TSLA", "MSFT"]
+
+producer = KafkaProducer(
+    bootstrap_servers=BOOTSTRAP_SERVERS,
+    value_serializer=lambda v: json.dumps(v).encode("utf-8")
+)
+
+url = "https://alpha-vantage.p.rapidapi.com/query"
+
+headers = {
+    "x-rapidapi-key": API_KEY,
+    "x-rapidapi-host": API_HOST
+}
+
+def fetch_stock_data(symbol):
+    params = {
+        "function": "TIME_SERIES_INTRADAY",
+        "symbol": symbol,
+        "interval": "1min",
+        "outputsize": "compact",
+        "datatype": "json"
+    }
+
+    response = requests.get(url, headers=headers, params=params)
+    response.raise_for_status()
+    return response.json()
+
+def send_records(symbol):
+    data = fetch_stock_data(symbol)
+    time_series = data.get("Time Series (1min)", {})
+
+    if not time_series:
+        print(f"No data for {symbol}")
+        return
+
+    for timestamp, values in list(time_series.items())[:20]:
+        record = {
+            "symbol": symbol,
+            "timestamp": timestamp,
+            "open_price": float(values["1. open"]),
+            "high_price": float(values["2. high"]),
+            "low_price": float(values["3. low"]),
+            "close_price": float(values["4. close"]),
+            "volume": int(values["5. volume"])
+        }
+
+        producer.send(TOPIC, record)
+        producer.flush()
+        print("Sent:", record)
+        time.sleep(0.3)
+
+if __name__ == "__main__":
+    while True:
+        for symbol in SYMBOLS:
+            send_records(symbol)
+            time.sleep(2)
+
+        print("Batch complete → sleeping 60s")
+        time.sleep(60)
