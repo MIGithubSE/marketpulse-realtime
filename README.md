@@ -159,6 +159,175 @@ http://localhost:8080
 
 ---
 
+
+## ⚠️ Current Stable Runtime Workflow
+
+The project currently runs most reliably using a controlled manual execution flow.
+
+### Recommended Startup Order
+
+Start Docker services first:
+
+```bash
+docker compose up -d
+```
+
+Activate the virtual environment:
+
+```bash
+source venv/bin/activate
+```
+
+Run the Kafka consumer:
+
+```bash
+python app/consumer/postgres_consumer.py
+```
+
+In another terminal, run the producer:
+
+```bash
+python app/producer/stock_producer.py
+```
+
+Run analytics modules manually:
+
+```bash
+python app/ai_trend_detection.py
+python app/price_prediction.py
+python app/spark_processing.py
+python app/pipeline_monitoring.py
+```
+
+Launch the dashboard:
+
+```bash
+streamlit cache clear
+streamlit run app/dashboard/dashboard.py
+```
+
+---
+
+## 📊 Dashboard Features
+
+The Streamlit dashboard currently provides:
+
+- Real-time stock monitoring
+- Spark aggregation insights
+- AI trend detection
+- Price prediction outputs
+- Pipeline health monitoring
+- Data freshness tracking
+
+---
+
+## 🔄 Airflow Status
+
+Airflow integration is currently configured for manual DAG execution only.
+
+Current DAG configuration:
+
+```python
+schedule=None
+```
+
+This prevents automatic scheduling conflicts during development and testing.
+
+The DAG can still be triggered manually through:
+
+- Airflow UI
+- CLI commands
+
+Example:
+
+```bash
+airflow dags trigger marketpulse_stock_pipeline
+```
+
+---
+
+## 🧪 Verified Working Components
+
+The following components are confirmed operational:
+
+✅ Kafka Producer  
+✅ Kafka Consumer  
+✅ PostgreSQL Integration  
+✅ Spark Aggregation Pipeline  
+✅ AI Trend Detection  
+✅ Price Prediction Module  
+✅ Pipeline Monitoring  
+✅ Streamlit Dashboard  
+✅ GitHub CI Workflow (Manual Push)
+
+---
+
+## 🛠️ Troubleshooting
+
+### Dashboard Freeze / Infinite Loading
+
+If the dashboard hangs on:
+
+```python
+load_data(...)
+```
+
+Run the Spark aggregation manually:
+
+```bash
+python app/spark_processing.py
+```
+
+Then restart Streamlit:
+
+```bash
+streamlit cache clear
+streamlit run app/dashboard/dashboard.py
+```
+
+---
+
+### PostgreSQL Table Missing
+
+Error:
+
+```text
+psycopg2.errors.UndefinedTable:
+relation "spark_stock_aggregates" does not exist
+```
+
+Fix:
+
+```bash
+python app/spark_processing.py
+```
+
+---
+
+### GitHub SSH Permission Error
+
+If Git push fails with:
+
+```text
+Permission denied (publickey)
+```
+
+Run:
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/marketpulse_github
+ssh -T git@github.com
+```
+
+Then retry:
+
+```bash
+git push
+```
+
+
+
 ## 📊 Pipeline Flow
 
 1. Kafka streams stock data
