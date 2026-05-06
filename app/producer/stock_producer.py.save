@@ -14,11 +14,6 @@ BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
 
 SYMBOLS = ["IBM", "AAPL", "TSLA", "MSFT"]
 
-MAX_DAILY_CALLS = 20  # Safe buffer below 25
-CALLS_PER_BATCH = len(SYMBOLS)
-SLEEP_HOURS = 5      # 5 hours between batches
-API_COUNTER_FILE = "api_call_counter.json"
-
 producer = KafkaProducer(
     bootstrap_servers=BOOTSTRAP_SERVERS,
     value_serializer=lambda v: json.dumps(v).encode("utf-8")
@@ -30,38 +25,6 @@ headers = {
     "x-rapidapi-key": API_KEY,
     "x-rapidapi-host": API_HOST
 }
-
-
-def load_api_counter():
-    today = time.strftime("%Y-%m-%d")
-
-    try:
-        with open(API_COUNTER_FILE, "r") as f:
-            data = json.load(f)
-
-        if data.get("date") == today:
-            return data.get("count", 0)
-
-    except FileNotFoundError:
-        pass
-    except json.JSONDecodeError:
-        print("Counter file is corrupted. Resetting counter for today.")
-
-    return 0
-
-
-def save_api_counter(count):
-    today = time.strftime("%Y-%m-%d")
-
-    with open(API_COUNTER_FILE, "w") as f:
-        json.dump(
-            {
-                "date": today,
-                "count": count
-            },
-            f
-        )
-
 
 def fetch_stock_data(symbol):
     params = {
@@ -75,7 +38,6 @@ def fetch_stock_data(symbol):
     response = requests.get(url, headers=headers, params=params)
     response.raise_for_status()
     return response.json()
-
 
 def send_records(symbol):
     data = fetch_stock_data(symbol)
@@ -101,27 +63,10 @@ def send_records(symbol):
         print("Sent:", record)
         time.sleep(0.3)
 
-
 if __name__ == "__main__":
-    daily_calls = load_api_counter()
-    print(f"Loaded API calls used today: {daily_calls}/{MAX_DAILY_CALLS}")
-
     while True:
-        if daily_calls + CALLS_PER_BATCH > MAX_DAILY_CALLS:
-            print(f"Daily safe API limit reached: {daily_calls}/{MAX_DAILY_CALLS}")
-            print("Sleeping for 24 hours before trying again...")
-            time.sleep(60 * 60 * 24)
-
-            daily_calls = 0
-            save_api_counter(daily_calls)
-            continue
-
         for symbol in SYMBOLS:
             send_records(symbol)
-            daily_calls += 1
-            save_api_counter(daily_calls)
-            print(f"API calls used today: {daily_calls}/{MAX_DAILY_CALLS}")
             time.sleep(2)
 
-        print(f"Batch complete → sleeping {SLEEP_HOURS} hours")
-        time.sleep(60 * 60 * SLEEP_HOURS)
+        print("Batch complete → sleeping 60s")        time.sleep(60)

@@ -36,12 +36,13 @@ def monitor_pipeline():
 
     if latest_stock_insert is None:
         notes.append("No stock data found.")
-    elif latest_stock_insert < now - timedelta(hours=6):
+    elif latest_stock_insert < now - timedelta(minutes=10):
         notes.append("Stock data is stale.")
-
+elif latest_stock_insert < now - timedelta(hours=6):
+    notes.append("Stock data is stale.")
     if latest_trend_run is None:
         notes.append("No trend detection runs found.")
-    elif latest_trend_run < now - timedelta(minutes=10):
+    elif latest_trend_run < now - timede		lta(minutes=10):
         notes.append("Trend detection is stale.")
 
     if latest_prediction_run is None:
