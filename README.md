@@ -5,26 +5,28 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue)
 ![Airflow](https://img.shields.io/badge/Airflow-Orchestration-red)
 ![Spark](https://img.shields.io/badge/Spark-Big%20Data-orange)
+![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red)
 ![Docker](https://img.shields.io/badge/Docker-Containerization-blue)
 
 ---
 
-## 📌 Overview
+# 📌 Overview
 
-MarketPulse is a **production-style real-time data pipeline** that ingests, processes, analyzes, and monitors stock market data.
+MarketPulse is a production-style real-time stock analytics pipeline that ingests, processes, analyzes, monitors, and visualizes live market data.
 
-It demonstrates how modern data systems combine:
+The project demonstrates how modern real-time data engineering systems combine:
 
 * ⚡ Real-time streaming
 * 🧠 Machine learning
 * 🔄 Workflow orchestration
 * 📊 Big data processing
+* 📈 Interactive monitoring dashboards
 
 ---
 
-## 🏗️ Architecture
+# 🏗️ Architecture
 
-```
+```text
         ┌──────────────┐
         │  Kafka       │
         │  Producer    │
@@ -57,119 +59,257 @@ Analysis   AI Models    Monitoring
         ┌──────────────┐
         │ PostgreSQL   │
         │ (Insights)   │
+        └──────┬───────┘
+               ↓
+        ┌──────────────┐
+        │ Streamlit    │
+        │ Dashboard    │
         └──────────────┘
 ```
 
 ---
 
-## ⚙️ Key Features
+# ⚙️ Key Features
 
-### ⚡ Real-Time Streaming
+## ⚡ Real-Time Streaming
 
-* Kafka producer simulates stock market data
+* Kafka producer simulates real stock market ingestion
 * Kafka consumer writes directly into PostgreSQL
-
-### 🗄️ Data Storage
-
-* PostgreSQL stores structured stock data
-* Optimized for analytics queries
-
-### 🧠 AI & Machine Learning
-
-* Trend detection
-* Price prediction models
-
-### 📊 Big Data Processing (Spark)
-
-* Aggregates:
-
-  * Average price
-  * Min / Max price
-  * Volume insights
-* Writes results back to database
-
-### 🔄 Workflow Orchestration
-
-* Apache Airflow DAG automates the entire pipeline
-* Modular task execution
-
-### 📡 Monitoring
-
-* Pipeline health checks
-* Data freshness validation
+* Continuous streaming architecture
 
 ---
 
-## 🧪 Example Output
+## 🗄️ Data Storage
+
+PostgreSQL stores:
+
+* raw stock data
+* trend signals
+* AI predictions
+* monitoring metrics
+* Spark aggregates
+
+---
+
+## 🧠 AI & Machine Learning
+
+### Trend Detection
+
+* Bullish / Bearish classification
+* Moving average analysis
+* Confidence scoring
+
+### Price Prediction
+
+* Predicts next close price
+* Calculates:
+
+  * predicted change
+  * predicted direction
+
+---
+
+## 📊 Big Data Processing (Spark)
+
+Spark aggregation pipeline calculates:
+
+* Average close price
+* Maximum close price
+* Minimum close price
+* Average trading volume
+* Total records per symbol
+
+---
+
+## 🔄 Workflow Orchestration (Airflow)
+
+Apache Airflow orchestrates:
+
+* AI trend detection
+* price prediction
+* Spark processing
+* monitoring checks
+
+### Stable Manual-Only Workflow
+
+The DAG is intentionally configured in manual-only mode for stability and controlled execution.
+
+Features include:
+
+* `schedule=None`
+* single active DAG run
+* reduced Airflow parallelism
+* example DAGs disabled
+* successful manual DAG execution verified
+
+---
+
+# 📈 Interactive Streamlit Dashboard
+
+## Dashboard Features
+
+* Real-time stock charts
+* AI prediction tables
+* Spark aggregated insights
+* Pipeline monitoring section
+* Smart freshness indicators
+* Auto-refresh every 30 seconds
+* Safe PostgreSQL loading logic
+* Empty-table handling
+* Improved dashboard stability
+
+## Current Dashboard Status
+
+* ✅ Stable
+* ✅ Auto-refreshing
+* ✅ Connected to PostgreSQL
+* ✅ Displays live pipeline metrics
+* ✅ Manual Airflow runs reflected correctly
+
+---
+
+# 📡 Monitoring System
+
+Pipeline monitoring tracks:
+
+* total stock rows
+* total symbols
+* latest stock insert
+* trend freshness
+* prediction freshness
+* pipeline health state
+
+Status types:
+
+* 🟢 Healthy
+* 🟠 Warning
+* 🔴 Stale
+
+The monitoring system validates that:
+
+* Kafka ingestion is active
+* PostgreSQL is updating correctly
+* AI analysis modules are producing fresh results
+* Spark aggregation tables exist and remain updated
+* Dashboard metrics reflect current pipeline activity
+
+The MarketPulse project now behaves like a production-style real-time analytics pipeline with controlled manual orchestration and stable dashboard monitoring.
+
+---
+
+# 🧪 Example Output
 
 | Symbol | Avg Price | Max Price | Min Price | Avg Volume |
 | ------ | --------- | --------- | --------- | ---------- |
-| AAPL   | 269.68    | 269.79    | 269.50    | 387.65     |
-| TSLA   | 377.79    | 377.93    | 377.60    | 1803.75    |
-| IBM    | 232.18    | 233.00    | 227.96    | 9247.14    |
-| MSFT   | 428.23    | 428.44    | 428.00    | 848.75     |
+| AAPL   | 277.18    | 287.40    | 269.50    | 2055.53    |
+| TSLA   | 387.26    | 397.30    | 377.60    | 2320.11    |
+| IBM    | 232.09    | 233.00    | 226.00    | 4594.45    |
+| MSFT   | 416.65    | 428.44    | 408.65    | 717.97     |
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠️ Tech Stack
 
 | Layer            | Technology     |
 | ---------------- | -------------- |
 | Language         | Python         |
 | Streaming        | Apache Kafka   |
 | Database         | PostgreSQL     |
-| Orchestration    | Apache Airflow |
+| Workflow         | Apache Airflow |
 | Big Data         | Apache Spark   |
+| Dashboard        | Streamlit      |
 | Containerization | Docker         |
 
 ---
 
-## 🚀 Getting Started
+# 🚀 Getting Started
 
-### 1. Clone the repo
+## 1. Clone the Repository
 
-```
+```bash
 git clone https://github.com/MIGithubSE/marketpulse-realtime.git
 cd marketpulse-realtime
 ```
 
-### 2. Start services
+---
 
-```
+## 2. Start Infrastructure
+
+```bash
+sudo service postgresql stop
 docker compose up -d
+docker ps
 ```
 
-### 3. Activate environment
+---
 
-```
+## 3. Activate Virtual Environment
+
+```bash
 source venv/bin/activate
 ```
 
-### 4. Run Airflow
+---
 
+## 4. Start Kafka Consumer
+
+```bash
+python app/consumer/postgres_consumer.py
 ```
+
+---
+
+## 5. Start Kafka Producer
+
+```bash
+python app/producer/stock_producer.py
+```
+
+---
+
+## 6. Run Streamlit Dashboard
+
+```bash
+streamlit cache clear
+streamlit run app/dashboard/dashboard.py
+```
+
+Open:
+
+```text
+http://localhost:8501
+```
+
+---
+
+## 7. Start Airflow (Manual Mode)
+
+```bash
+AIRFLOW__CORE__PARALLELISM=2 \
+AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG=1 \
 airflow standalone
 ```
 
 Open:
 
-```
+```text
 http://localhost:8080
 ```
 
 ---
 
-
-## ⚠️ Current Stable Runtime Workflow
+# ⚠️ Current Stable Runtime Workflow
 
 The project currently runs most reliably using a controlled manual execution flow.
 
-### Recommended Startup Order
+## Recommended Startup Order
 
 Start Docker services first:
 
 ```bash
+sudo service postgresql stop
 docker compose up -d
+docker ps
 ```
 
 Activate the virtual environment:
@@ -208,20 +348,7 @@ streamlit run app/dashboard/dashboard.py
 
 ---
 
-## 📊 Dashboard Features
-
-The Streamlit dashboard currently provides:
-
-- Real-time stock monitoring
-- Spark aggregation insights
-- AI trend detection
-- Price prediction outputs
-- Pipeline health monitoring
-- Data freshness tracking
-
----
-
-## 🔄 Airflow Status
+# 🔄 Airflow Status
 
 Airflow integration is currently configured for manual DAG execution only.
 
@@ -235,8 +362,8 @@ This prevents automatic scheduling conflicts during development and testing.
 
 The DAG can still be triggered manually through:
 
-- Airflow UI
-- CLI commands
+* Airflow UI
+* CLI commands
 
 Example:
 
@@ -246,25 +373,26 @@ airflow dags trigger marketpulse_stock_pipeline
 
 ---
 
-## 🧪 Verified Working Components
+# ✅ Verified Working Components
 
 The following components are confirmed operational:
 
-✅ Kafka Producer  
-✅ Kafka Consumer  
-✅ PostgreSQL Integration  
-✅ Spark Aggregation Pipeline  
-✅ AI Trend Detection  
-✅ Price Prediction Module  
-✅ Pipeline Monitoring  
-✅ Streamlit Dashboard  
-✅ GitHub CI Workflow (Manual Push)
+✅ Kafka Producer
+✅ Kafka Consumer
+✅ PostgreSQL Integration
+✅ Spark Aggregation Pipeline
+✅ AI Trend Detection
+✅ Price Prediction Module
+✅ Pipeline Monitoring
+✅ Streamlit Dashboard
+✅ Manual Airflow DAG Execution
+✅ GitHub Integration
 
 ---
 
-## 🛠️ Troubleshooting
+# 🛠️ Troubleshooting
 
-### Dashboard Freeze / Infinite Loading
+## Dashboard Freeze / Infinite Loading
 
 If the dashboard hangs on:
 
@@ -287,7 +415,25 @@ streamlit run app/dashboard/dashboard.py
 
 ---
 
-### PostgreSQL Table Missing
+## PostgreSQL Connection Refused
+
+If PostgreSQL fails to connect:
+
+```text
+connection refused
+```
+
+Run:
+
+```bash
+sudo service postgresql stop
+docker compose up -d
+docker ps
+```
+
+---
+
+## PostgreSQL Table Missing
 
 Error:
 
@@ -304,7 +450,7 @@ python app/spark_processing.py
 
 ---
 
-### GitHub SSH Permission Error
+## GitHub SSH Permission Error
 
 If Git push fails with:
 
@@ -326,49 +472,64 @@ Then retry:
 git push
 ```
 
+---
 
-
-## 📊 Pipeline Flow
+# 📊 Pipeline Flow
 
 1. Kafka streams stock data
 2. Consumer writes to PostgreSQL
-3. Airflow triggers:
+3. Airflow manually triggers:
 
-   * Data analysis
    * AI trend detection
-   * Price prediction
-   * Monitoring checks
+   * price prediction
    * Spark aggregation
-4. Results stored back in PostgreSQL
+   * pipeline monitoring
+4. Results written back to PostgreSQL
+5. Streamlit dashboard visualizes live analytics
 
 ---
 
-## 📈 Future Improvements
+# 📈 Future Improvements
 
 * Real-time Spark Streaming
-* Interactive dashboard (Streamlit / React)
-* Advanced ML models
-* Anomaly detection
+* Live Kafka ingestion counters
+* Smarter dashboard status badges
+* Auto-refresh countdown timers
+* Advanced ML forecasting
 * News sentiment analysis
+* Anomaly detection
+* React frontend
+* Cloud deployment
 
 ---
 
-## 👨‍💻 Author
+# 👨‍💻 Author
 
 **Mohammed Idriss**
-GitHub: https://github.com/MIGithubSE
+
+GitHub:
+https://github.com/MIGithubSE
 
 ---
 
-## ⭐ Why This Project Stands Out
+# ⭐ Why This Project Stands Out
 
-This project showcases:
+This project demonstrates:
 
-* End-to-end data pipeline design
-* Real-time data engineering
+* End-to-end real-time data pipelines
+* Production-style orchestration
 * Machine learning integration
 * Big data processing with Spark
-* Production-style architecture
+* Real-time monitoring dashboards
+* Stream processing architecture
+* Dockerized infrastructure
+* Airflow workflow management
 
-It reflects real-world systems used in **fintech, analytics, and AI-driven platforms**.
+It reflects systems commonly used in:
+
+* fintech
+* analytics platforms
+* AI-driven applications
+* streaming data engineering
+* real-time monitoring systems
 
